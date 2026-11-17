@@ -1,6 +1,6 @@
 [package]
 name = "tesela"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 description = "Tesela: an experimental lossy/lossless image format with a Rust encoder and a WebAssembly decoder"
 license = "MIT OR Apache-2.0"
