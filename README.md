@@ -665,15 +665,16 @@ To retrain the initial probabilities (with images other than the evaluation ones
 - No browser or operating system supports it natively. You need `tesela.js` and WebAssembly
   (630 KB; 730 KB more for the threaded version, which only encodes). It's worth serving a JPEG
   `fallback` too.
-- On large photos, against AVIF with full chroma (4:4:4), the difference on the 50 DIV2K photos of
-  2.7 MP is only 0.7 points, practically a tie. On CLIC and Kodak Tesela wins by 6 and 4 points.
+- On large photos the lead over AVIF with full chroma (4:4:4) is smaller: 4.5 points on the 50 DIV2K
+  photos of 2.7 MP, against 7 on Kodak and almost 10 on CLIC.
 - In lossless mode, photos come out larger than with WebP and JPEG XL.
 - It only supports 8 bits per channel, and the alpha channel is always lossless (an alpha with
   smooth gradients costs quite a lot). There's no HDR. On the web, the color profile is honored with
   `tesela-auto.js`, but `<tesela-img>` paints in sRGB.
 - Animation with natural motion is weaker. Tesela beats animated AVIF (4:4:4) on four of the
-  benchmark's six animations, by a wide margin on screen content, but on a 90-frame zoom AVIF is 11%
-  smaller and with moving objects, 4% smaller (hidden future frames and bidirectional prediction).
+  benchmark's six animations, by a wide margin on screen content, but on a 90-frame zoom AVIF is 10%
+  smaller, and with moving, rotating objects they tie (AVIF 1% smaller). AVIF has hidden future
+  frames and bidirectional prediction.
 - It already encodes faster than AVIF on photos, but 10 to 20 times slower than JPEG XL or WebP:
   ~1 s per 0.4 MP photo with 4 cores. In the browser it uses threads only if the page is
   cross-origin isolated (see the comparator); the `tesela.js` library still encodes with one.

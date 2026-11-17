@@ -673,17 +673,16 @@ Para reentrenar las probabilidades iniciales (con imágenes que no sean las de e
 - Ningún navegador ni sistema operativo lo soporta de forma nativa: hace falta `tesela.js` y
   WebAssembly (630 KB; 730 KB más la versión con hilos, solo para codificar). Conviene servir un
   `fallback` en JPEG.
-- En fotos grandes, frente a AVIF con croma completa (4:4:4), en las 50 fotos de 2,7 MP de DIV2K
-  la diferencia es de solo 0,7 puntos, prácticamente un empate. En CLIC y Kodak Tesela gana por
-  6 y 4 puntos.
+- En fotos grandes la ventaja sobre AVIF con croma completa (4:4:4) es menor: 4,5 puntos en las
+  50 fotos de 2,7 MP de DIV2K, frente a 7 en Kodak y casi 10 en CLIC.
 - En modo sin pérdida, las fotos ocupan más que con WebP y JPEG XL.
 - Solo admite 8 bits por canal, y el canal alfa siempre es sin pérdida
   (un alfa con degradados suaves cuesta bastante). No tiene HDR. En la web, el perfil de color se
   respeta con `tesela-auto.js`, pero `<tesela-img>` pinta en sRGB.
 - La animación con movimiento natural va peor. Tesela gana a AVIF animado (4:4:4) en cuatro de las seis
   animaciones del banco, con mucha ventaja en contenido de pantalla, pero en un zoom de 90
-  fotogramas AVIF ocupa un 11 % menos y con objetos que se mueven, un 4 % menos (fotogramas
-  futuros ocultos y predicción bidireccional).
+  fotogramas AVIF ocupa un 10 % menos, y con objetos que se mueven y giran empatan (AVIF, un 1 %
+  menos). AVIF usa fotogramas futuros ocultos y predicción bidireccional.
 - Ya codifica más rápido que AVIF en fotos, pero de 10 a 20 veces
   más lento que JPEG XL o WebP: ~1 s por foto de 0,4 MP con 4 núcleos. En el navegador va con hilos solo si la página
   está aislada entre orígenes (ver el comparador); la librería `tesela.js` aún codifica con uno.
