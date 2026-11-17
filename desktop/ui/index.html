@@ -65,7 +65,8 @@
             <span>Calidad <output id="calidad-v" class="mono" for="calidad">85</output></span>
             <input type="range" id="calidad" min="0" max="100" step="1" value="85">
           </label>
-          <label class="check"><input type="checkbox" id="sinperdida"> Sin pérdida (exacto bit a bit)</label>
+          <label class="check"><input type="checkbox" id="sinperdida" aria-describedby="sinperdida-hint"> Sin pérdida (exacto bit a bit)</label>
+          <p class="hint faint" id="sinperdida-hint">Para capturas, logos y PNG. Con fotos JPEG ocupará más que el original, porque el JPEG ya perdió calidad (aunque menos que un PNG).</p>
 
           <fieldset class="field">
             <legend>Destino</legend>

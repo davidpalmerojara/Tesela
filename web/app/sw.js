@@ -14,7 +14,7 @@
 // Este service worker controla solo /app/; el de la raíz (tesela-sw.js, si lo
 // registró otra página) sigue controlando el resto de la web.
 
-const CACHE = 'tesela-app-v2';
+const CACHE = 'tesela-app-v3';
 const SHELL = [
   './',
   'app.css',

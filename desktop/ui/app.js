@@ -415,6 +415,7 @@ async function convertAll() {
         `<span>${bytes(r.originalBytes)} → <b>${bytes(r.tslBytes)}</b></span>` +
         `<span class="${saved >= 0 ? 'ahorro' : 'peor'}">${pct}</span>` +
         `<span class="faint">${num1.format(r.millis / 1000)} s${frames}</span>` +
+        (saved < 0 ? `<span class="peor">${lossless ? 'Más grande que el original: con fotos JPEG, desmarca «Sin pérdida».' : 'Más grande que el original: prueba con menos calidad.'}</span>` : '') +
         `<button class="btn small" data-ver>Ver</button><button class="btn small" data-mostrar>Mostrar</button>`);
       it.el.querySelector('[data-ver]').addEventListener('click', () => { selectTab(tabs[0]); openPath(r.output); });
       it.el.querySelector('[data-mostrar]').addEventListener('click', () => invoke('reveal', { path: r.output }).catch((e) => toast(errText(e), true)));
@@ -432,7 +433,7 @@ async function convertAll() {
   updateConvButtons();
   if (ok) {
     $('resumen').textContent =
-      `${int.format(ok)} convertida${ok > 1 ? 's' : ''}: ${bytes(orig)} → ${bytes(tsl)} (−${num1.format((1 - tsl / orig) * 100)} %)`;
+      `${int.format(ok)} convertida${ok > 1 ? 's' : ''}: ${bytes(orig)} → ${bytes(tsl)} (${tsl <= orig ? '−' : '+'}${num1.format(Math.abs(1 - tsl / orig) * 100)} %)`;
   }
 }
 $('convertir').addEventListener('click', convertAll);
