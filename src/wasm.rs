@@ -4,8 +4,15 @@
 //! cuyo contenido empieza por su longitud total (u32 LE, incluida la propia
 //! cabecera de 4 bytes). JavaScript lo lee y lo libera con `tsl_free`.
 //! Un puntero nulo indica error (mensaje en `tsl_last_error`).
+//!
+//! Las funciones de codificación (`tsl_header`, `tsl_encode*`,
+//! `tsl_encode_tile`) solo existen con la característica `encoder` (activa por
+//! defecto). Sin ella, el módulo solo decodifica y ocupa unos tres
+//! quintos (`web/tesela-dec.wasm`, el de `tesela-lite.js`).
 
-use crate::codec::{self, Header, Params};
+#[cfg(feature = "encoder")]
+use crate::codec::Params;
+use crate::codec::{self, Header};
 use std::cell::RefCell;
 
 thread_local! {
@@ -65,12 +72,14 @@ pub extern "C" fn tsl_last_error() -> *mut u8 {
     LAST_ERROR.with(|e| give(&e.borrow()))
 }
 
+#[cfg(any(feature = "encoder", feature = "metrics"))]
 fn rgba_to_rgb(rgba: &[u8]) -> Vec<u8> {
     rgba.chunks_exact(4)
         .flat_map(|p| [p[0], p[1], p[2]])
         .collect()
 }
 
+#[cfg(feature = "encoder")]
 fn alpha_of(rgba: &[u8]) -> Option<Vec<u8>> {
     let a: Vec<u8> = rgba.chunks_exact(4).map(|p| p[3]).collect();
     a.iter().any(|&v| v != 255).then_some(a)
@@ -84,6 +93,7 @@ fn to_rgba(rgb: &[u8], alpha: Option<&[u8]>) -> Vec<u8> {
     out
 }
 
+#[cfg(feature = "encoder")]
 fn params(quality: f32, effort: u32, tune: u32) -> Params {
     let p = Params {
         quality,
@@ -102,6 +112,7 @@ fn params(quality: f32, effort: u32, tune: u32) -> Params {
 ///
 /// # Safety
 /// `rgba` debe apuntar a `w*h*4` bytes válidos.
+#[cfg(feature = "encoder")]
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn tsl_header(
     rgba: *const u8,
@@ -125,8 +136,10 @@ pub unsafe extern "C" fn tsl_header(
 }
 
 /// Opciones de `tsl_encode_ex` y `tsl_encode_animation` (bits de `flags`).
+#[cfg(feature = "encoder")]
 pub const FLAG_LOSSLESS: u32 = 1;
 
+#[cfg(feature = "encoder")]
 fn params_ex(quality: f32, effort: u32, tune: u32, flags: u32) -> Params {
     Params {
         lossless: flags & FLAG_LOSSLESS != 0,
@@ -139,6 +152,7 @@ fn params_ex(quality: f32, effort: u32, tune: u32, flags: u32) -> Params {
 ///
 /// # Safety
 /// `rgba` debe apuntar a `w*h*4` bytes válidos.
+#[cfg(feature = "encoder")]
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn tsl_encode(
     rgba: *const u8,
@@ -156,6 +170,7 @@ pub unsafe extern "C" fn tsl_encode(
 ///
 /// # Safety
 /// `rgba` debe apuntar a `w*h*4` bytes válidos.
+#[cfg(feature = "encoder")]
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn tsl_encode_ex(
     rgba: *const u8,
@@ -184,6 +199,7 @@ pub unsafe extern "C" fn tsl_encode_ex(
 ///
 /// # Safety
 /// `frames` debe apuntar a `n*w*h*4` bytes y `durations` a `n*4` bytes válidos.
+#[cfg(feature = "encoder")]
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
 pub unsafe extern "C" fn tsl_encode_animation(
@@ -225,6 +241,7 @@ pub unsafe extern "C" fn tsl_encode_animation(
 ///
 /// # Safety
 /// `rgba` debe apuntar a `tw*th*4` bytes y `hdr` a `hdr_len` bytes válidos.
+#[cfg(feature = "encoder")]
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
 pub unsafe extern "C" fn tsl_encode_tile(

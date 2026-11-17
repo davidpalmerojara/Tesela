@@ -1,11 +1,12 @@
 // Vectores de conformidad v1 decodificados con el módulo WebAssembly:
 //   node web/test-vectors.mjs
+// Con WASM=web/tesela-dec.wasm se prueba otro módulo (el de solo decodificar).
 // Comprueba que la salida RGBA coincide con el hash de tests/vectors/manifest.txt.
 import fs from 'node:fs';
 import { Core } from './tesela-core.js';
 
 const root = new URL('../tests/vectors/', import.meta.url);
-const module = await WebAssembly.compile(fs.readFileSync(new URL('./tesela.wasm', import.meta.url)));
+const module = await WebAssembly.compile(fs.readFileSync(process.env.WASM ?? new URL('./tesela.wasm', import.meta.url)));
 const imports = {};
 for (const i of WebAssembly.Module.imports(module)) (imports[i.module] ??= {})[i.name] = () => { throw new Error(i.name); };
 const core = new Core((await WebAssembly.instantiate(module, imports)).exports);

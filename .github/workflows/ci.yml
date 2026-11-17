@@ -20,7 +20,7 @@ jobs:
       - name: Fuzzing breve del decodificador (archivos mutados; no puede caerse)
         run: cargo run --profile fuzz --example fuzz_decode -- 20000 ${{ github.run_number }}
       - name: Compilar WebAssembly
-        run: cargo build --release --target wasm32-unknown-unknown --lib --no-default-features --features metrics
+        run: cargo build --release --target wasm32-unknown-unknown --lib --no-default-features --features encoder,metrics
       - name: Determinismo nativo vs WebAssembly
         run: |
           cp target/wasm32-unknown-unknown/release/tesela.wasm web/tesela.wasm
@@ -29,9 +29,16 @@ jobs:
           node web/test-wasm.mjs /tmp/s.tsl /tmp/s.rgb
       - name: Vectores de conformidad v1 en WebAssembly
         run: node web/test-vectors.mjs
+      - name: WebAssembly solo decodificador (web/tesela-dec.wasm) igual que nativo
+        run: |
+          cargo build --release --target wasm32-unknown-unknown --lib --no-default-features --config profile.release.strip=true --target-dir target/dec
+          cp target/dec/wasm32-unknown-unknown/release/tesela.wasm web/tesela-dec.wasm
+          node -e "const e=WebAssembly.Module.exports(new WebAssembly.Module(require('fs').readFileSync('web/tesela-dec.wasm'))).map(x=>x.name);if(e.some(n=>/encode|header|metrics/.test(n))||!e.includes('tsl_decode'))throw new Error(e.join(' '))"
+          WASM=web/tesela-dec.wasm node web/test-wasm.mjs /tmp/s.tsl /tmp/s.rgb
+          WASM=web/tesela-dec.wasm node web/test-vectors.mjs
       - name: WebAssembly con hilos igual que nativo
         run: |
-          cargo build --release --target wasm32-wasip1-threads --lib --no-default-features --features metrics
+          cargo build --release --target wasm32-wasip1-threads --lib --no-default-features --features encoder,metrics
           cp target/wasm32-wasip1-threads/release/tesela.wasm web/tesela-mt.wasm
           ./target/release/tesela encode web/compare/sample.png /tmp/l.tsl --lossless
           ./target/release/tesela decode /tmp/l.tsl /tmp/l.rgb

@@ -1,10 +1,11 @@
 // Comprueba que el módulo WebAssembly decodifica bit a bit igual que el
 // binario nativo:  node web/test-wasm.mjs archivo.tsl referencia.rgb
+// Con WASM=web/tesela-dec.wasm se prueba otro módulo (el de solo decodificar).
 import fs from 'node:fs';
 import { Core } from './tesela-core.js';
 
 const [tsl, ref] = process.argv.slice(2);
-const module = await WebAssembly.compile(fs.readFileSync(new URL('./tesela.wasm', import.meta.url)));
+const module = await WebAssembly.compile(fs.readFileSync(process.env.WASM ?? new URL('./tesela.wasm', import.meta.url)));
 const imports = {};
 for (const i of WebAssembly.Module.imports(module)) (imports[i.module] ??= {})[i.name] = () => { throw new Error(i.name); };
 const core = new Core((await WebAssembly.instantiate(module, imports)).exports);

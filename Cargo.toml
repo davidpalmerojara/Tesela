@@ -12,7 +12,11 @@ ssimulacra2 = { version = "0.5.1", optional = true }
 rayon = { version = "1", optional = true }
 
 [features]
-default = ["cli"]
+default = ["cli", "encoder"]
+# Funciones de codificación del módulo WebAssembly (tsl_header, tsl_encode*,
+# tsl_encode_tile). Sin ella queda un módulo que solo decodifica, más pequeño:
+# web/tesela-dec.wasm (`--no-default-features`, ver web/build.sh).
+encoder = []
 parallel = ["dep:rayon"]
 metrics = ["dep:ssimulacra2"]
 cli = ["dep:image", "metrics", "parallel"]
