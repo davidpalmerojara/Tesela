@@ -48,7 +48,7 @@
         <a href="../app/index.html">Convertir y abrir</a>
         <a href="../compare/index.html">Comparador</a>
         <a href="../demo/index.html">Demo</a>
-        <a class="ext" href="https://github.com/davidpalmerojara/FVD">GitHub</a>
+        <a class="ext" href="https://github.com/davidpalmerojara/Tesela">GitHub</a>
       </nav>
       <script>{const n=document.querySelector('nav.links'),a=n&&n.querySelector('[aria-current]');if(n){if(a&&n.scrollWidth>n.clientWidth)n.scrollLeft=a.offsetLeft-(n.clientWidth-a.offsetWidth)/2;n.addEventListener('focusin',(e)=>e.target.scrollIntoView({block:'nearest',inline:'nearest'}))}}</script>
     </div>
@@ -93,7 +93,7 @@
         del navegador y te muestra tamaño, calidad y un visor para compararlas. Nada sale de tu ordenador.</p>
       <h3>Con la línea de comandos</h3>
       <p>Necesitas <a href="https://rustup.rs">Rust</a>. Acepta PNG y JPEG.</p>
-      <pre><code>git clone https://github.com/davidpalmerojara/FVD.git tesela
+      <pre><code>git clone https://github.com/davidpalmerojara/Tesela.git tesela
 cd tesela
 cargo build --release
 ./target/release/tesela encode foto.jpg foto.tsl -q 85        # comprimir
@@ -228,16 +228,16 @@ tesela roundtrip &lt;entrada&gt; [opciones de encode]         # codifica, decodi
         <figure><img src="img/curvas-ilustraciones.png" alt="Curvas en ilustraciones" loading="lazy"><figcaption>Ilustraciones</figcaption></figure>
       </div>
       <p>Informes completos con todas las métricas (SSIMULACRA2, PSNR, SSIM) y datos crudos en
-        <a href="https://github.com/davidpalmerojara/FVD/tree/HEAD/bench/results"><code>bench/results</code></a>. El banco
+        <a href="https://github.com/davidpalmerojara/Tesela/tree/HEAD/bench/results"><code>bench/results</code></a>. El banco
         de pruebas es reproducible: <code>python3 bench/bench.py</code>.</p>
 
       <h2 id="especificacion">Especificación</h2>
       <ul>
-        <li><a href="https://github.com/davidpalmerojara/FVD/blob/HEAD/docs/especificacion-v1.md">Especificación de la versión 1</a>
+        <li><a href="https://github.com/davidpalmerojara/Tesela/blob/HEAD/docs/especificacion-v1.md">Especificación de la versión 1</a>
           (congelada): contenedor, sintaxis y reconstrucción con el detalle necesario para escribir otro decodificador.</li>
-        <li><a href="https://github.com/davidpalmerojara/FVD/blob/HEAD/docs/especificacion-v2-borrador.md">Borrador de la versión 2</a>:
+        <li><a href="https://github.com/davidpalmerojara/Tesela/blob/HEAD/docs/especificacion-v2-borrador.md">Borrador de la versión 2</a>:
           diferencias con la v1.</li>
-        <li><a href="https://github.com/davidpalmerojara/FVD/tree/HEAD/tests/vectors">Archivos de conformidad</a>: 14 archivos
+        <li><a href="https://github.com/davidpalmerojara/Tesela/tree/HEAD/tests/vectors">Archivos de conformidad</a>: 14 archivos
           con el hash de su salida. Un decodificador es conforme con la v1 si los reproduce todos.</li>
       </ul>
       <p>Cada archivo lleva su versión en la cabecera: un <code>.tsl</code> v1 seguirá abriéndose con cualquier versión
@@ -272,7 +272,7 @@ tesela roundtrip &lt;entrada&gt; [opciones de encode]         # codifica, decodi
 
       <h2 id="descargas">Descargas</h2>
       <ul>
-        <li><b>Código fuente:</b> <a href="https://github.com/davidpalmerojara/FVD">github.com/davidpalmerojara/FVD</a>
+        <li><b>Código fuente:</b> <a href="https://github.com/davidpalmerojara/Tesela">github.com/davidpalmerojara/Tesela</a>
           (Rust, sin dependencias de C).</li>
         <li><b>Librería web:</b> la carpeta <code>web/</code> del repositorio (<code>tesela.wasm</code>,
           <code>tesela.js</code> y compañía). <code>web/build.sh</code> la regenera.</li>
@@ -287,7 +287,7 @@ tesela roundtrip &lt;entrada&gt; [opciones de encode]         # codifica, decodi
         <p>Formato de imagen experimental escrito en Rust. Código, banco de pruebas y metodología, abiertos.</p></div>
       <div><h4>Producto</h4><a href="../compare/index.html">Comparador</a><a href="../demo/index.html">Demo web</a><a href="../demo/img.html">HTML normal</a></div>
       <div><h4>Documentación</h4><a href="#empezar">Empezar</a><a href="#web">En la web</a><a href="#formato">Cómo funciona</a><a href="#faq">Preguntas</a></div>
-      <div><h4>Proyecto</h4><a href="https://github.com/davidpalmerojara/FVD">GitHub</a><a href="https://github.com/davidpalmerojara/FVD/blob/HEAD/docs/especificacion-v1.md">Especificación v1</a><a href="https://github.com/davidpalmerojara/FVD/tree/HEAD/bench/results">Datos del banco</a></div>
+      <div><h4>Proyecto</h4><a href="https://github.com/davidpalmerojara/Tesela">GitHub</a><a href="https://github.com/davidpalmerojara/Tesela/blob/HEAD/docs/especificacion-v1.md">Especificación v1</a><a href="https://github.com/davidpalmerojara/Tesela/tree/HEAD/bench/results">Datos del banco</a></div>
     </div>
   </footer>
   <script>

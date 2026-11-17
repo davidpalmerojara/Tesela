@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 description = "Tesela: visor y conversor de imágenes .tsl"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/davidpalmerojara/tesela"
+repository = "https://github.com/davidpalmerojara/Tesela"
 publish = false
 
 # Crate aparte (con su propio Cargo.lock y target/): así las compilaciones del

@@ -41,7 +41,7 @@ congele, puede cambiar.
 ## Descargas
 
 Binarios listos, sin necesidad de Rust, en la
-[página de versiones](https://github.com/davidpalmerojara/tesela/releases):
+[página de versiones](https://github.com/davidpalmerojara/Tesela/releases):
 
 - **Aplicación de escritorio** (visor y conversor de `.tsl`: se abre con doble clic, reproduce
   animaciones, guarda como PNG y convierte PNG/JPEG/GIF/WebP arrastrándolos): instalador para
@@ -60,7 +60,7 @@ Ejecutar de todas formas*. En macOS, clic derecho sobre la app → *Abrir* (en m
 **Comparador con tus fotos.** Solo necesitas Git y Python 3; no hace falta Rust.
 
 ```sh
-git clone https://github.com/davidpalmerojara/FVD.git tesela
+git clone https://github.com/davidpalmerojara/Tesela.git tesela
 cd tesela
 python web/serve.py        # en macOS/Linux/WSL puede ser python3
 ```

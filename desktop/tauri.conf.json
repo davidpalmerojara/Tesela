@@ -40,7 +40,7 @@
     "category": "GraphicsAndDesign",
     "shortDescription": "Visor y conversor de imágenes .tsl",
     "longDescription": "Abre, reproduce y convierte imágenes en el formato experimental Tesela (.tsl). El códec se ejecuta de forma nativa, sin conexión.",
-    "homepage": "https://github.com/davidpalmerojara/tesela",
+    "homepage": "https://github.com/davidpalmerojara/Tesela",
     "license": "MIT OR Apache-2.0",
     "icon": [
       "icons/32x32.png",

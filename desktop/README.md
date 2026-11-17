@@ -14,7 +14,7 @@ lleva un navegador dentro como Electron.
 
 ## Descarga
 
-En [Releases](https://github.com/davidpalmerojara/tesela/releases):
+En [Releases](https://github.com/davidpalmerojara/Tesela/releases):
 
 - **Windows 10/11**: `Tesela_X.Y.Z_x64-setup.exe` (o el `.msi`). Usa WebView2, que ya viene
   con Windows 10/11; si faltara, el instalador lo descarga.

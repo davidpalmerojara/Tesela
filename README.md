@@ -41,7 +41,7 @@ frozen, it may change.
 ## Downloads
 
 Ready-made binaries, no Rust needed, are on the
-[Releases page](https://github.com/davidpalmerojara/tesela/releases):
+[Releases page](https://github.com/davidpalmerojara/Tesela/releases):
 
 - **Desktop app** (viewer and converter for `.tsl`: open with a double click, play animations,
   save as PNG, convert PNG/JPEG/GIF/WebP by dragging them in): Windows installer (`.exe`/`.msi`),
@@ -59,7 +59,7 @@ Security → Open Anyway*), or run `xattr -dr com.apple.quarantine /Applications
 **Comparator with your photos.** You only need Git and Python 3; Rust is not required.
 
 ```sh
-git clone https://github.com/davidpalmerojara/FVD.git tesela
+git clone https://github.com/davidpalmerojara/Tesela.git tesela
 cd tesela
 python web/serve.py        # on macOS/Linux/WSL it may be python3
 ```
