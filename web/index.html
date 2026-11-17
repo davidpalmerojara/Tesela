@@ -192,14 +192,24 @@
       </div>
     </section>
 
+    <section class="section" id="descargas">
+      <p class="eyebrow">Descargas</p>
+      <h2>Ábrelo y conviértelo donde quieras</h2>
+      <p class="lead">Sin instalar nada en el navegador, o con una aplicación pequeña para tu ordenador. Gratis y de código abierto.</p>
+      <div class="grid-3">
+        <div class="card feature"><h3>En el navegador</h3><p><a href="./app/index.html">Convertir y abrir</a>: pasa tus fotos a <code>.tsl</code> y abre archivos Tesela sin subir nada a ningún servidor. En Chrome y Edge se instala como aplicación y abre los <code>.tsl</code> con doble clic.</p></div>
+        <div class="card feature"><h3>Aplicación de escritorio</h3><p>Visor y conversor nativos para <a href="https://github.com/davidpalmerojara/Tesela/releases/latest">Windows, macOS y Linux</a>, de solo unos MB. Asocia los <code>.tsl</code> para abrirlos con doble clic. Aún sin firma digital: Windows pedirá «Más información → Ejecutar de todas formas», y en macOS se abre con clic derecho → Abrir.</p></div>
+        <div class="card feature"><h3>Línea de comandos</h3><p>El codificador completo, con animación, sin pérdida y todas las opciones, para <a href="https://github.com/davidpalmerojara/Tesela/releases/latest">Windows, macOS (Intel y Apple) y Linux</a>. Para automatizar conversiones o integrarlo en tu web.</p></div>
+      </div>
+    </section>
+
     <section class="section start" id="empezar">
       <p class="eyebrow">Empieza en un minuto</p>
       <h2>De tu foto a tu web</h2>
       <div class="grid-2">
         <div>
-          <p class="muted">1. Convierte tus imágenes en el navegador, con <a href="./app/index.html">Convertir y abrir</a>, o con la línea de comandos:</p>
-          <pre><code>cargo build --release
-./target/release/tesela encode foto.jpg foto.tsl -q 85</code></pre>
+          <p class="muted">1. Convierte tus imágenes en el navegador, con <a href="./app/index.html">Convertir y abrir</a>, o con la <a href="#descargas">línea de comandos</a>:</p>
+          <pre><code>tesela encode foto.jpg foto.tsl -q 85</code></pre>
         </div>
         <div>
           <p class="muted">2. Úsalas en tu web con HTML normal:</p>
@@ -236,7 +246,7 @@
         <p class="by">Un proyecto de <a href="https://davidpalmero.dev/">David Palmero</a></p></div>
       <div><h4>Producto</h4><a href="./app/index.html">Convertir y abrir</a><a href="./compare/index.html">Comparador</a><a href="./demo/index.html">Demo web</a><a href="./demo/img.html">HTML normal</a></div>
       <div><h4>Documentación</h4><a href="./docs/index.html#empezar">Empezar</a><a href="./docs/index.html#web">En la web</a><a href="./docs/index.html#formato">Cómo funciona</a><a href="./docs/index.html#faq">Preguntas</a></div>
-      <div><h4>Proyecto</h4><a href="https://github.com/davidpalmerojara/Tesela">GitHub</a><a href="https://github.com/davidpalmerojara/Tesela/blob/HEAD/docs/especificacion-v1.md">Especificación v1</a><a href="https://github.com/davidpalmerojara/Tesela/tree/HEAD/bench/results">Datos del banco</a></div>
+      <div><h4>Proyecto</h4><a href="https://github.com/davidpalmerojara/Tesela">GitHub</a><a href="#descargas">Descargas</a><a href="https://github.com/davidpalmerojara/Tesela/blob/HEAD/docs/especificacion-v1.md">Especificación v1</a><a href="https://github.com/davidpalmerojara/Tesela/tree/HEAD/bench/results">Datos del banco</a></div>
     </div>
   </footer>
 
