@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- La CSP más estricta con la que funciona tesela-lite.js: nada en línea, todo del mismo origen. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; connect-src 'self'; img-src 'self' data: blob:; style-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'">
+  <title>Tesela en tu web con tesela-lite.js</title>
+  <link rel="canonical" href="https://tesela.davidpalmero.dev/demo/lite.html">
+  <link rel="stylesheet" href="../style.css?v=5">
+  <link rel="stylesheet" href="lite.css">
+  <script src="../tesela-lite.js" defer></script>
+  <script src="lite-demo.js" defer></script>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <a class="dp" href="https://davidpalmero.dev/" title="David Palmero, portafolio" aria-label="David Palmero, portafolio"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M32 11V53"/><path d="M32 16h3a9.5 9.5 0 0 1 0 19h-3"/><path d="M32 48h-3a9.5 9.5 0 0 1 0-19h3"/></g></svg></a>
+      <a class="brand" href="../index.html"><span class="logo"><i></i><i></i><i></i></span>Tesela</a>
+      <nav class="links">
+        <a href="../index.html">Visión general</a>
+        <a href="../docs/index.html">Documentación</a>
+        <a href="../app/index.html">Convertir y abrir</a>
+        <a href="../compare/index.html">Comparador</a>
+        <a href="../demo/index.html" aria-current="page">Demo</a>
+        <a class="ext" href="https://github.com/davidpalmerojara/Tesela">GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    <h1>tesela-lite.js con una CSP estricta</h1>
+    <p class="lead">Esta página no tiene ni un script ni un estilo en línea: su política de seguridad (CSP) solo permite
+      archivos del mismo origen, más <code>'wasm-unsafe-eval'</code> para el WebAssembly e imágenes <code>blob:</code>.
+      Las imágenes son <code>&lt;img&gt;</code> normales con <code>data-tsl</code>; <code>tesela-lite.js</code> (un archivo
+      sin dependencias) las decodifica en un Web Worker con <code>tesela-dec.wasm</code>, el módulo que solo decodifica.</p>
+    <pre><code>&lt;script src="/tesela-lite.js" defer&gt;&lt;/script&gt;
+
+&lt;img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E"
+     data-tsl="foto.tsl" data-fallback="foto.jpg"
+     width="768" height="512" alt="Dos loros" loading="lazy"&gt;
+&lt;noscript&gt;&lt;img src="foto.jpg" width="768" height="512" alt="Dos loros"&gt;&lt;/noscript&gt;</code></pre>
+    <p class="muted">Guía completa, con la CSP mínima: <a href="../docs/index.html#tu-web">Usa Tesela en tu web</a>.</p>
+
+    <div class="grid">
+      <figure class="card">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" data-tsl="kodim23.tsl" data-fallback="kodim23.jpg" width="768" height="512" alt="Dos loros de colores" id="img1">
+        <noscript><img src="kodim23.jpg" width="768" height="512" alt="Dos loros de colores"></noscript>
+        <figcaption>kodim23.tsl, 25 KB (en JPEG, 57 KB)</figcaption>
+      </figure>
+      <figure class="card">
+        <div class="checker"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" data-tsl="alpha.tsl" width="768" height="512" alt="Loros con borde transparente" id="img2"></div>
+        <figcaption>alpha.tsl, con transparencia</figcaption>
+      </figure>
+    </div>
+
+    <h2>Carga diferida y ampliación</h2>
+    <p class="muted">La siguiente imagen tiene <code>loading="lazy"</code>: se decodifica al acercarse a la pantalla. El botón la
+      abre en grande con <code>TeselaLite.decodeToURL()</code>, que reutiliza la imagen ya decodificada.</p>
+    <div class="spacer"></div>
+    <div class="grid">
+      <figure class="card">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" data-tsl="kodim05.tsl" data-fallback="kodim05.jpg" width="768" height="512" alt="Motocicletas de carreras" loading="lazy" id="img3">
+        <noscript><img src="kodim05.jpg" width="768" height="512" alt="Motocicletas de carreras" loading="lazy"></noscript>
+        <figcaption>kodim05.tsl, 90 KB (en JPEG, 128 KB) · <button type="button" id="open">Ver en grande</button></figcaption>
+      </figure>
+    </div>
+    <dialog class="lb" id="lb"><img alt="Motocicletas de carreras" width="768" height="512"></dialog>
+  </main>
+
+  <footer class="site-note">
+    <div class="wrap"><p>Las imágenes de esta web están en formato Tesela: ocupan un 45 % menos que en PNG.</p></div>
+  </footer>
+</body>
+</html>

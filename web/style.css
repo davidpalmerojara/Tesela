@@ -188,6 +188,16 @@ footer.site .by a { display: inline; color: var(--accent); }
 footer.site a { display: block; color: var(--text); text-decoration: none; margin: 0 0 6px; }
 footer.site a:hover { color: var(--accent); }
 footer.site p { color: var(--muted); margin: 8px 0 0; max-width: 320px; }
+/* «Las imágenes de esta web están en formato Tesela»: una línea al pie de cada
+   página (fila propia en el pie grande, o pie mínimo en las demás). */
+footer.site .site-note { grid-column: 1 / -1; max-width: none; margin: 0; padding-top: 18px; border-top: 1px solid var(--border); font-size: 13.5px; }
+footer.site-note { margin-top: 56px; border-top: 1px solid var(--border); }
+footer.site-note p { margin: 0; padding: 18px 0 24px; color: var(--muted); font-size: 13.5px; }
+footer.site-note a, footer.site .site-note a { display: inline; color: var(--accent); }
+
+/* Imágenes .tsl con tesela-lite.js: sin JavaScript solo se ve su copia en
+   <noscript> (si no, quedaría además un hueco vacío del mismo tamaño). */
+@media (scripting: none) { img[data-tsl] { display: none !important; } }
 
 @media (max-width: 860px) {
   .grid-3, .grid-2 { grid-template-columns: minmax(0, 1fr); }

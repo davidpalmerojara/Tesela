@@ -1,0 +1,15 @@
+/* demo/lite.html: sin estilos en línea, que su CSP estricta no permite. */
+main { padding: 32px 0 64px; }
+h1 { font-size: 28px; letter-spacing: -0.02em; margin: 0 0 8px; }
+h2 { font-size: 20px; margin: 36px 0 10px; }
+.lead { color: var(--muted); max-width: 760px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+.grid figure { margin: 0; padding: 12px; }
+.grid img { width: 100%; height: auto; display: block; border-radius: 8px; }
+figcaption { font-size: 14px; color: var(--muted); margin-top: 8px; }
+.checker { background: repeating-conic-gradient(#ccc 0 25%, #fff 0 50%) 0 0 / 24px 24px; border-radius: 8px; }
+.spacer { height: 40vh; }
+dialog.lb { border: 0; padding: 0; background: transparent; max-width: min(1100px, 96vw); }
+dialog.lb::backdrop { background: rgb(0 0 0 / 0.75); }
+dialog.lb img { display: block; width: 100%; height: auto; border-radius: 8px; }
+@media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
