@@ -9,7 +9,7 @@
   <meta name="description" content="Tesela es un formato de imagen escrito desde cero en Rust: a igual calidad perceptual ocupa menos que WebP, AVIF y JPEG XL, y funciona en cualquier navegador con WebAssembly.">
   <meta property="og:title" content="Tesela · formato de imagen">
   <meta property="og:description" content="Mismas imágenes, menos bytes: un 33 % menos que WebP en fotos y más de un 60 % menos en capturas e ilustraciones, a igual calidad perceptual.">
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
   <style>
     .hero { padding: 64px 0 8px; display: grid; grid-template-columns: 1.25fr 1fr; gap: 48px; align-items: center; }
     .hero h1 { font-size: 50px; line-height: 1.04; letter-spacing: -0.035em; margin: 0 0 18px; }
@@ -49,7 +49,7 @@
     dialog.lb::backdrop { background: rgb(0 0 0 / 0.75); }
     .lb-in { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .lb-in figure { margin: 0; background: var(--surface); border-radius: 10px; padding: 8px; }
-    .lb-in img { width: 100%; image-rendering: pixelated; display: block; border-radius: 6px; }
+    .lb-in img { width: 100%; height: auto; image-rendering: pixelated; display: block; border-radius: 6px; }
     .lb-in figcaption { font-size: 13.5px; padding: 6px 2px 0; }
     @media (max-width: 860px) {
       .hero { grid-template-columns: 1fr; padding-top: 36px; }
@@ -111,7 +111,7 @@
             recorte de cada resultado. Pulsa en uno para verlo ampliado junto al original.</p>
         </div>
         <div>
-          <div class="tabs" role="tablist" id="gal-tabs"></div>
+          <div class="tabs" role="tablist" id="gal-tabs"><button role="tab" aria-selected="true">Foto</button><button role="tab" aria-selected="false">Captura</button><button role="tab" aria-selected="false">Ilustración</button></div>
           <label class="muted" style="display:block;font-size:14px"><input type="checkbox" id="gal-zoom" checked> Ampliar 2×</label>
         </div>
       </div>
@@ -247,10 +247,15 @@
       <div><h4>Producto</h4><a href="./app/index.html">Convertir y abrir</a><a href="./compare/index.html">Comparador</a><a href="./demo/index.html">Demo web</a><a href="./demo/img.html">HTML normal</a></div>
       <div><h4>Documentación</h4><a href="./docs/index.html#empezar">Empezar</a><a href="./docs/index.html#web">En la web</a><a href="./docs/index.html#formato">Cómo funciona</a><a href="./docs/index.html#faq">Preguntas</a></div>
       <div><h4>Proyecto</h4><a href="https://github.com/davidpalmerojara/Tesela">GitHub</a><a href="#descargas">Descargas</a><a href="https://github.com/davidpalmerojara/Tesela/blob/HEAD/docs/especificacion-v1.md">Especificación v1</a><a href="https://github.com/davidpalmerojara/Tesela/tree/HEAD/bench/results">Datos del banco</a></div>
+      <p class="site-note">Las imágenes de esta web están en formato Tesela: ocupan un 45 % menos que en PNG (<a href="./docs/index.html#tu-web">úsalo en tu web</a>).</p>
     </div>
   </footer>
 
   <script type="module" src="./tesela.js"></script>
+  <!-- Las imágenes de la galería son .tsl. tesela-lite.js las pone en <img>
+       normales; data-wasm reutiliza el tesela.wasm que ya carga tesela.js para
+       la animación de arriba (sin él usaría tesela-dec.wasm). -->
+  <script src="./tesela-lite.js" data-wasm="tesela.wasm" defer></script>
   <dialog class="lb" id="lb"><div class="lb-in" id="lb-in"></div></dialog>
 
   <script type="module">
@@ -278,6 +283,8 @@
     const COLORS = { tesela: 'var(--c-tesela)', avif: 'var(--c-avif)', jxl: 'var(--c-jxl)', webp: 'var(--c-webp)', jpeg: 'var(--c-jpeg)' };
     const NAMES = { foto: 'Foto', captura: 'Captura', ilustracion: 'Ilustración' };
     const kb = (b) => (b / 1024).toFixed(1).replace('.', ',') + ' KB';
+    // Marcador sin proporción propia: manda la de width/height mientras se decodifica el .tsl.
+    const PH = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E";
     const gal = document.getElementById('gal');
     const tabs = document.getElementById('gal-tabs');
     let data = [];
@@ -289,7 +296,7 @@
       const items = [{ codec: 'original', label: 'Original', bytes: null }, ...ORDER.map((c) => e.codecs.find((x) => x.codec === c)).filter(Boolean)];
       gal.innerHTML = items.map((c) => `
         <figure class="card tile${c.codec === 'tesela' ? ' us' : ''}" data-c="${c.codec}">
-          <div class="img"><img src="gallery/${e.name}_${c.codec}.png" alt="${c.label}" loading="lazy" width="${e.crop[2]}" height="${e.crop[2]}"></div>
+          <div class="img"><img src="${PH}" data-tsl="gallery/${e.name}_${c.codec}.tsl" data-fallback="gallery/${e.name}_${c.codec}.png" alt="${c.label}" loading="lazy" width="${e.crop[2]}" height="${e.crop[2]}"></div>
           <figcaption><b>${c.label}</b><span class="muted num">${c.bytes ? kb(c.bytes) : '—'}</span></figcaption>
           ${c.bytes ? `<div class="muted num" style="font-size:13px;margin-top:4px">SSIMULACRA2 ${String(c.ssimulacra2).replace('.', ',')}</div>
           <div class="meter"><i style="width:${Math.max(0, c.ssimulacra2)}%;background:${COLORS[c.codec]}"></i></div>` : '<div class="muted" style="font-size:13px;margin-top:4px">referencia</div><div class="meter"></div>'}
@@ -305,15 +312,20 @@
     });
     document.getElementById('gal-zoom').onchange = (ev) => gal.classList.toggle('zoom', ev.target.checked);
     const lb = document.getElementById('lb');
-    gal.addEventListener('click', (ev) => {
+    // Ampliación: las mismas imágenes ya decodificadas (TeselaLite.decodeToURL
+    // devuelve la misma URL blob: para el mismo .tsl); el PNG, si Tesela falla.
+    const url = (n) => (window.TeselaLite ? TeselaLite.decodeToURL(`gallery/${n}.tsl`) : Promise.reject()).catch(() => `gallery/${n}.png`);
+    gal.addEventListener('click', async (ev) => {
       const t = ev.target.closest('.tile');
       if (!t) return;
       const e = data[cur];
       const c = t.dataset.c;
       const info = e.codecs.find((x) => x.codec === c);
+      const [a, b] = await Promise.all([url(`${e.name}_original`), url(`${e.name}_${c}`)]);
+      const n = e.crop[2];
       document.getElementById('lb-in').innerHTML = `
-        <figure><img src="gallery/${e.name}_original.png" alt="Original"><figcaption>Original</figcaption></figure>
-        <figure><img src="gallery/${e.name}_${c}.png" alt="${info ? info.label : 'Original'}"><figcaption>${info ? `${info.label} · ${kb(info.bytes)} · SSIMULACRA2 ${String(info.ssimulacra2).replace('.', ',')}` : 'Original'}</figcaption></figure>`;
+        <figure><img src="${a}" alt="Original" width="${n}" height="${n}"><figcaption>Original</figcaption></figure>
+        <figure><img src="${b}" alt="${info ? info.label : 'Original'}" width="${n}" height="${n}"><figcaption>${info ? `${info.label} · ${kb(info.bytes)} · SSIMULACRA2 ${String(info.ssimulacra2).replace('.', ',')}` : 'Original'}</figcaption></figure>`;
       lb.showModal();
     });
     lb.addEventListener('click', () => lb.close());

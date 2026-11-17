@@ -6,7 +6,7 @@
   <title>Documentación · Tesela</title>
   <link rel="canonical" href="https://tesela.davidpalmero.dev/docs/">
   <meta name="description" content="Documentación de Tesela: primeros pasos, uso en la web, línea de comandos, cómo funciona el formato, resultados y preguntas frecuentes.">
-  <link rel="stylesheet" href="../style.css?v=4">
+  <link rel="stylesheet" href="../style.css?v=5">
   <style>
     .docs { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 48px; padding-top: 32px; }
     .toc { position: sticky; top: 76px; align-self: start; font-size: 14px; max-height: calc(100vh - 92px); overflow: auto; }
@@ -24,7 +24,7 @@
     .note { padding: 12px 16px; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; font-size: 14.5px; }
     .curves { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .curves figure { margin: 0; padding: 8px; background: #fff; border-radius: 10px; border: 1px solid var(--border); }
-    .curves img { width: 100%; display: block; }
+    .curves img { width: 100%; height: auto; display: block; }
     .curves figcaption { color: #444; font-size: 13px; padding: 4px 4px 0; }
     .faq dt { font-weight: 700; margin-top: 18px; }
     .faq dd { margin: 4px 0 0; color: var(--muted); }
@@ -63,6 +63,7 @@
       <a class="sub" href="#web-img">HTML normal</a>
       <a class="sub" href="#web-elemento">Elemento &lt;tesela-img&gt;</a>
       <a class="sub" href="#web-api">API de JavaScript</a>
+      <a class="sub" href="#tu-web">Usa Tesela en tu web</a>
       <a class="sub" href="#web-servidor">Servidor</a>
       <a href="#cli">Línea de comandos</a>
       <a href="#formato">Cómo funciona</a>
@@ -107,8 +108,10 @@ cargo build --release
       <p>Con <code>serve.py</code>, Tesela codifica con varios hilos también en el navegador (ver <a href="#web-servidor">Servidor</a>).</p>
 
       <h2 id="web">Uso en la web</h2>
-      <p>Hay dos formas de mostrar imágenes <code>.tsl</code>. Las dos usan el mismo módulo de WebAssembly
-        (<code>tesela.wasm</code>, ~630 KB, que se descarga una vez y queda en la caché).</p>
+      <p>Hay tres formas de mostrar imágenes <code>.tsl</code>. Las dos primeras usan el módulo de WebAssembly completo
+        (<code>tesela.wasm</code>, 925 KB; 268 KB con brotli), que también codifica; la tercera,
+        <a href="#tu-web"><code>tesela-lite.js</code></a>, solo decodifica, con un módulo de 550 KB (156 KB con brotli),
+        y es la más sencilla para una web estática con una CSP estricta. Los módulos se descargan una vez y quedan en la caché.</p>
 
       <h3 id="web-img">Opción 1: HTML normal (recomendada)</h3>
       <pre><code>&lt;script src="/tesela-auto.js"&gt;&lt;/script&gt;   &lt;!-- en el &lt;head&gt; --&gt;
@@ -142,6 +145,66 @@ const preview = await decodePreview(firstBytes);       // vista previa, si ya ha
       <p>Opciones de <code>encode</code>: <code>quality</code> (0–100, por defecto 75), <code>effort</code> (1–9, por
         defecto 4) y <code>tune</code> (<code>'balanced'</code>, <code>'perceptual'</code> o <code>'psnr'</code>).
         Decodificar reparte las teselas de la imagen entre varios Web Workers.</p>
+
+      <h3 id="tu-web">Usa Tesela en tu web: tesela-lite.js</h3>
+      <p>Para una web estática (un portafolio, un blog) que solo necesita mostrar imágenes: un archivo sin dependencias,
+        <code>tesela-lite.js</code>, y el módulo que solo decodifica, <code>tesela-dec.wasm</code>. No necesita Service
+        Worker ni módulos de JavaScript y funciona con una CSP estricta. Esta web lo usa para sus propias imágenes.</p>
+      <ol>
+        <li>Copia <code>tesela-lite.js</code> y <code>tesela-dec.wasm</code> en la misma carpeta de tu web (en tu dominio,
+          no en un CDN: el worker tiene que ser del mismo origen que la página).</li>
+        <li>Convierte las imágenes (<code>tesela encode foto.jpg foto.tsl -q 85</code>) y conserva el original, o un WebP,
+          como respaldo.</li>
+        <li>Carga el script y marca las imágenes:</li>
+      </ol>
+      <pre><code>&lt;script src="/tesela-lite.js" defer&gt;&lt;/script&gt;
+
+&lt;img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E"
+     data-tsl="/img/foto.tsl" data-fallback="/img/foto.webp"
+     width="1200" height="800" alt="Descripción" loading="lazy"&gt;
+&lt;noscript&gt;&lt;img src="/img/foto.webp" width="1200" height="800" alt="Descripción" loading="lazy"&gt;&lt;/noscript&gt;</code></pre>
+      <p>Y en tu CSS:</p>
+      <pre><code>img { max-width: 100%; height: auto; }
+@media (scripting: none) { img[data-tsl] { display: none !important; } }</code></pre>
+      <ul>
+        <li><b><code>src</code>:</b> un SVG vacío, sin proporción propia, así que mientras se decodifica manda la de
+          <code>width</code>/<code>height</code> y la página no salta. (Sin <code>src</code>, un <code>&lt;img&gt;</code> con
+          <code>alt</code> se dibuja como texto y no reserva su altura.)</li>
+        <li><b><code>data-tsl</code>:</b> el <code>.tsl</code> se descarga y se decodifica en un Web Worker; el resultado se pone
+          en el mismo <code>&lt;img&gt;</code> como PNG (<code>blob:</code>), así que el CSS, <code>object-fit</code>,
+          «Guardar imagen como» y los eventos <code>load</code> funcionan como con cualquier imagen. El módulo se compila
+          una sola vez y lo comparten todos los workers.</li>
+        <li><b><code>data-fallback</code>:</b> se usa si Tesela falla (sin WebAssembly, bloqueado por la CSP, error de red o
+          archivo dañado), y solo se descarga en ese caso.</li>
+        <li><b><code>&lt;noscript&gt;</code>:</b> lo que ve quien no tiene JavaScript; la regla <code>scripting: none</code>
+          oculta el hueco del <code>&lt;img data-tsl&gt;</code>.</li>
+        <li><b><code>loading="lazy"</code>:</b> se decodifica al acercarse a la pantalla. Las imágenes que se añaden después
+          (una galería, un lightbox) se detectan solas.</li>
+        <li><b>Animaciones:</b> muestra el primer fotograma; para reproducirlas, <code>&lt;tesela-img&gt;</code>.</li>
+      </ul>
+      <p>Para un lightbox o cualquier imagen creada desde JavaScript:</p>
+      <pre><code>const url = await TeselaLite.decodeToURL('/img/foto-grande.tsl');  // URL blob: de un PNG
+lightbox.querySelector('img').src = url;   // mismo .tsl, misma URL: no se decodifica dos veces
+TeselaLite.load(img);                      // decodificar ya, aunque tenga loading="lazy"</code></pre>
+      <p>Si la página ya carga <code>tesela.wasm</code> (por ejemplo, para <code>&lt;tesela-img&gt;</code>),
+        <code>&lt;script src="tesela-lite.js" data-wasm="tesela.wasm"&gt;</code> reutiliza ese módulo en vez de descargar otro.</p>
+      <p><b>CSP.</b> Lo que hay que añadir a una política estricta:</p>
+      <pre><code>script-src  'self' 'wasm-unsafe-eval';   # compilar el WebAssembly
+worker-src  'self';                      # el worker es el propio tesela-lite.js
+connect-src 'self';                      # descargar los .tsl y el .wasm
+img-src     'self' data: blob:;          # el marcador (data:) y la imagen decodificada (blob:)</code></pre>
+      <ul>
+        <li><code>'wasm-unsafe-eval'</code> solo permite compilar WebAssembly, no <code>eval</code> de JavaScript (Chrome 97,
+          Firefox 102, Safari 16). Sin ella, se usan los <code>data-fallback</code>.</li>
+        <li>Con <code>default-src 'self'</code>, <code>worker-src</code> y <code>connect-src</code> ya están cubiertos. Si la
+          CSP usa <code>'strict-dynamic'</code> con nonces, añade <code>worker-src 'self'</code>; si aun así no se puede crear
+          el worker, se decodifica en la página (más lento, pero funciona).</li>
+        <li>Si la CSP llega como cabecera HTTP, ponla también en la respuesta de <code>tesela-lite.js</code> (lo normal: la
+          misma para todo el sitio), porque el worker tiene la suya.</li>
+        <li>No hace falta <code>'unsafe-inline'</code> ni en <code>script-src</code> ni en <code>style-src</code>.</li>
+        <li>Sirve <code>.wasm</code> como <code>application/wasm</code> (si no, se compila igual, algo más tarde).</li>
+      </ul>
+      <p><a href="../demo/lite.html">Ver la demo con CSP estricta</a>.</p>
 
       <h3 id="web-servidor">Servidor</h3>
       <ul>
@@ -222,10 +285,10 @@ tesela roundtrip &lt;entrada&gt; [opciones de encode]         # codifica, decodi
         (effort 7), WebP con libwebp 1.6 (método 6). En fotos, Tesela también codifica más rápido que AVIF (1,9 frente a
         2,5 s por foto de Kodak) y decodifica de 3 a 4 veces más rápido.</p>
       <div class="curves">
-        <figure><img src="img/curvas-kodak.png" alt="Curvas de calidad frente a bits por píxel en Kodak" loading="lazy"><figcaption>Kodak</figcaption></figure>
-        <figure><img src="img/curvas-fotos-grandes.png" alt="Curvas en fotos grandes" loading="lazy"><figcaption>Fotos grandes</figcaption></figure>
-        <figure><img src="img/curvas-capturas.png" alt="Curvas en capturas de pantalla" loading="lazy"><figcaption>Capturas</figcaption></figure>
-        <figure><img src="img/curvas-ilustraciones.png" alt="Curvas en ilustraciones" loading="lazy"><figcaption>Ilustraciones</figcaption></figure>
+        <figure><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" data-tsl="img/curvas-kodak.tsl" data-fallback="img/curvas-kodak.png" width="1760" height="550" alt="Curvas de calidad frente a bits por píxel en Kodak" loading="lazy"><noscript><img src="img/curvas-kodak.png" width="1760" height="550" alt="Curvas de calidad frente a bits por píxel en Kodak" loading="lazy"></noscript><figcaption>Kodak</figcaption></figure>
+        <figure><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" data-tsl="img/curvas-fotos-grandes.tsl" data-fallback="img/curvas-fotos-grandes.png" width="1760" height="550" alt="Curvas en fotos grandes" loading="lazy"><noscript><img src="img/curvas-fotos-grandes.png" width="1760" height="550" alt="Curvas en fotos grandes" loading="lazy"></noscript><figcaption>Fotos grandes</figcaption></figure>
+        <figure><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" data-tsl="img/curvas-capturas.tsl" data-fallback="img/curvas-capturas.png" width="1760" height="550" alt="Curvas en capturas de pantalla" loading="lazy"><noscript><img src="img/curvas-capturas.png" width="1760" height="550" alt="Curvas en capturas de pantalla" loading="lazy"></noscript><figcaption>Capturas</figcaption></figure>
+        <figure><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" data-tsl="img/curvas-ilustraciones.tsl" data-fallback="img/curvas-ilustraciones.png" width="1760" height="550" alt="Curvas en ilustraciones" loading="lazy"><noscript><img src="img/curvas-ilustraciones.png" width="1760" height="550" alt="Curvas en ilustraciones" loading="lazy"></noscript><figcaption>Ilustraciones</figcaption></figure>
       </div>
       <p>Informes completos con todas las métricas (SSIMULACRA2, PSNR, SSIM) y datos crudos en
         <a href="https://github.com/davidpalmerojara/Tesela/tree/HEAD/bench/results"><code>bench/results</code></a>. El banco
@@ -292,8 +355,10 @@ tesela roundtrip &lt;entrada&gt; [opciones de encode]         # codifica, decodi
       <div><h4>Producto</h4><a href="../compare/index.html">Comparador</a><a href="../demo/index.html">Demo web</a><a href="../demo/img.html">HTML normal</a></div>
       <div><h4>Documentación</h4><a href="#empezar">Empezar</a><a href="#web">En la web</a><a href="#formato">Cómo funciona</a><a href="#faq">Preguntas</a></div>
       <div><h4>Proyecto</h4><a href="https://github.com/davidpalmerojara/Tesela">GitHub</a><a href="https://github.com/davidpalmerojara/Tesela/blob/HEAD/docs/especificacion-v1.md">Especificación v1</a><a href="https://github.com/davidpalmerojara/Tesela/tree/HEAD/bench/results">Datos del banco</a></div>
+      <p class="site-note">Las imágenes de esta web están en formato Tesela: ocupan un 45 % menos que en PNG (<a href="#tu-web">úsalo en tu web</a>).</p>
     </div>
   </footer>
+  <script src="../tesela-lite.js" defer></script>
   <script>
     // Marca en el índice la sección visible.
     const links = [...document.querySelectorAll('.toc a')];

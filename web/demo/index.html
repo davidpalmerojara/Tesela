@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tesela en la web</title>
   <link rel="canonical" href="https://tesela.davidpalmero.dev/demo/">
-  <link rel="stylesheet" href="../style.css?v=4">
+  <link rel="stylesheet" href="../style.css?v=5">
   <script type="module" src="../tesela.js"></script>
   <style>
     main { padding: 32px 0 64px; }
@@ -56,6 +56,11 @@
     <p class="muted">Con <code>tesela-auto.js</code> también funcionan <code>&lt;img src="foto.tsl"&gt;</code> y los fondos CSS
       sin elementos especiales: <a href="img.html">ver la demo</a>.</p>
 
+    <h2>Solo mostrar imágenes, con CSP estricta</h2>
+    <p class="muted"><code>tesela-lite.js</code> es un único archivo sin dependencias que decodifica <code>&lt;img data-tsl&gt;</code>
+      con el módulo que solo decodifica (156 KB con brotli) y funciona con una política de seguridad estricta:
+      <a href="lite.html">ver la demo</a>. Es el que usa esta web para sus propias imágenes.</p>
+
     <h2>Cómo usarlo</h2>
     <pre><code>&lt;script type="module" src="tesela.js"&gt;&lt;/script&gt;
 
@@ -67,6 +72,9 @@ const imageData = await decode(await (await fetch('foto.tsl')).arrayBuffer());
 const url = await toObjectURL(bytes);          // para usarla en cualquier &lt;img&gt;
 const tsl = await encode(imageData, { quality: 85 });   // codificar en el navegador</code></pre>
   </main>
+  <footer class="site-note">
+    <div class="wrap"><p>Las imágenes de esta web están en formato Tesela: ocupan un 45 % menos que en PNG (<a href="../docs/index.html#tu-web">úsalo en tu web</a>).</p></div>
+  </footer>
 
   <script type="module">
     const samples = [

@@ -6,7 +6,7 @@
   <title>Tesela con HTML normal</title>
   <!-- Una sola línea: a partir de aquí, cualquier .tsl funciona como una imagen más. -->
   <script src="../tesela-auto.js" data-sw="../tesela-sw.js"></script>
-  <link rel="stylesheet" href="../style.css?v=4">
+  <link rel="stylesheet" href="../style.css?v=5">
   <style>
     main { padding: 32px 0 64px; }
     h1 { font-size: 28px; letter-spacing: -0.02em; margin: 0 0 8px; }
@@ -44,11 +44,14 @@
     <pre><code>&lt;script src="/tesela-auto.js"&gt;&lt;/script&gt;
 &lt;img src="foto.tsl" alt="..."&gt;</code></pre>
     <div class="grid">
-      <figure class="card"><img id="img1" src="kodim23.tsl" alt="Dos loros"><figcaption>&lt;img src="kodim23.tsl"&gt;</figcaption></figure>
+      <figure class="card"><img id="img1" src="kodim23.tsl" width="768" height="512" alt="Dos loros"><figcaption>&lt;img src="kodim23.tsl"&gt;</figcaption></figure>
       <figure class="card"><div class="bg" id="bg"></div><figcaption>background: url('kodim05.tsl')</figcaption></figure>
-      <figure class="card"><div class="checker"><img id="img2" src="alpha.tsl" alt="Loros con borde transparente"></div><figcaption>&lt;img src="alpha.tsl"&gt; con transparencia</figcaption></figure>
-      <figure class="card"><img id="img3" src="terminal.tsl" alt="Terminal escribiendo comandos (animación)"><figcaption>&lt;img src="terminal.tsl"&gt;: animación de 90 fotogramas en 7 KB (en GIF, 242 KB)</figcaption></figure>
+      <figure class="card"><div class="checker"><img id="img2" src="alpha.tsl" width="768" height="512" alt="Loros con borde transparente"></div><figcaption>&lt;img src="alpha.tsl"&gt; con transparencia</figcaption></figure>
+      <figure class="card"><img id="img3" src="terminal.tsl" width="640" height="400" alt="Terminal escribiendo comandos (animación)"><figcaption>&lt;img src="terminal.tsl"&gt;: animación de 90 fotogramas en 7 KB (en GIF, 242 KB)</figcaption></figure>
     </div>
   </main>
+  <footer class="site-note">
+    <div class="wrap"><p>Las imágenes de esta web están en formato Tesela: ocupan un 45 % menos que en PNG (<a href="../docs/index.html#tu-web">úsalo en tu web</a>).</p></div>
+  </footer>
 </body>
 </html>
