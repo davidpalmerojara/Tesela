@@ -85,7 +85,7 @@
         <h1>Las mismas imágenes, <em>con menos bytes</em>.</h1>
         <p>Tesela es un formato de imagen con pérdida escrito desde cero. A igual calidad perceptual ocupa
           un 33&nbsp;% menos que WebP en fotos y más de un 60&nbsp;% menos en capturas e ilustraciones, por delante de
-          AVIF y JPEG XL. Y funciona hoy en cualquier navegador.</p>
+          AVIF y JPEG XL. Se decodifica con WebAssembly en cualquier navegador actual.</p>
         <div class="cta">
           <a class="btn primary" href="./app/index.html">Convierte tus imágenes</a>
           <a class="btn" href="./compare/index.html">Compáralo con WebP y AVIF</a>
@@ -105,8 +105,8 @@
     <section class="section" id="galeria">
       <div class="gal-head">
         <div>
-          <p class="eyebrow">Compruébalo</p>
-          <h2>Mismo peso, más calidad</h2>
+          <p class="eyebrow">Galería</p>
+          <h2>A igual tamaño de archivo</h2>
           <p class="lead">Cada formato codifica la imagen completa con el mismo presupuesto de bytes. Este es el mismo
             recorte de cada resultado. Pulsa en uno para verlo ampliado junto al original.</p>
         </div>
@@ -121,7 +121,7 @@
 
     <section class="section" id="resultados">
       <p class="eyebrow">Resultados</p>
-      <h2>Medido, no prometido</h2>
+      <h2>Cinco conjuntos de prueba</h2>
       <p class="lead">Ahorro medio de bytes frente a WebP a igual calidad perceptual (BD-rate con SSIMULACRA2; más negativo
         es mejor). Todos los formatos se miden con el mismo programa, y los datos crudos están en el repositorio.</p>
       <div class="card tw">
@@ -143,9 +143,9 @@
 
     <section class="section" id="animacion">
       <p class="eyebrow">Animación</p>
-      <h2>Adiós al GIF</h2>
-      <p class="lead">Tesela también anima: guarda solo lo que cambia entre fotogramas y predice cada bloque del
-        fotograma anterior. Esta terminal de 90 fotogramas ocupa 7 KB y se reproduce con un simple
+      <h2>Animaciones más ligeras que un GIF</h2>
+      <p class="lead">Tesela también guarda animaciones: solo lo que cambia entre fotogramas, y cada bloque se predice del
+        fotograma anterior. Esta terminal de 90 fotogramas ocupa 7 KB y se reproduce con un
         <code>&lt;img src="terminal.tsl"&gt;</code>.</p>
       <div class="grid-2" style="align-items:center">
         <div class="card" style="padding:10px"><tesela-img src="demo/terminal.tsl" alt="Terminal escribiendo comandos (animación de 90 fotogramas)" style="width:100%"></tesela-img></div>
@@ -169,23 +169,23 @@
 
     <section class="section" id="caracteristicas">
       <p class="eyebrow">Características</p>
-      <h2>Pensado para la web de hoy</h2>
+      <h2>Qué hace el formato</h2>
       <div class="grid-3">
         <div class="card feature"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h8v8H3zM13 3h4v4h-4zM19 3h2v2h-2zM13 9h8v12h-8zM3 13h8v8H3z"/></svg></div>
           <h3>Bloques que se adaptan</h3><p>Divide cada imagen en teselas de 64×64 a 4×4, también rectangulares, y elige
             para cada una la predicción y la partición que menos bytes gastan para la calidad pedida.</p></div>
         <div class="card feature"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M7 9h6M7 13h10"/></svg></div>
           <h3>Capturas y texto nítidos</h3><p>Detecta el contenido sintético y activa paleta, copia de bloques repetidos y
-            residuo sin transformada: letras e iconos limpios con la mitad de bytes.</p></div>
+            residuo sin transformada. En capturas ocupa un 61&nbsp;% menos que WebP.</p></div>
         <div class="card feature"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg></div>
           <h3>En cualquier navegador</h3><p>Un módulo WebAssembly decodifica en paralelo en Web Workers, con los mismos
-            píxeles que la versión nativa. Basta un <code>&lt;img src="foto.tsl"&gt;</code>.</p></div>
+            píxeles que la versión nativa. Con <code>tesela-auto.js</code>, vale un <code>&lt;img&gt;</code> normal.</p></div>
         <div class="card feature"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z" stroke-dasharray="3 3"/><path d="M8 16l3-4 2 2 3-5"/></svg></div>
           <h3>Transparencia y sin pérdida</h3><p>Canal alfa para logos y recortes, y un modo exacto bit a bit para cuando no
             se puede perder nada.</p></div>
         <div class="card feature"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="4"/></svg></div>
-          <h3>Vista previa progresiva</h3><p>Una miniatura de ~300 bytes al principio del archivo: se ve algo al instante,
-            incluso con mala conexión.</p></div>
+          <h3>Vista previa progresiva</h3><p>Una miniatura de ~300 bytes al principio del archivo, que se muestra
+            desenfocada mientras llega el resto.</p></div>
         <div class="card feature"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M9 11h6M9 15h6"/></svg></div>
           <h3>Especificación abierta</h3><p>Formato v1 congelado, con especificación completa y archivos de conformidad
             para comprobar cualquier decodificador.</p></div>
@@ -194,17 +194,17 @@
 
     <section class="section" id="descargas">
       <p class="eyebrow">Descargas</p>
-      <h2>Ábrelo y conviértelo donde quieras</h2>
-      <p class="lead">Sin instalar nada en el navegador, o con una aplicación pequeña para tu ordenador. Gratis y de código abierto.</p>
+      <h2>Ábrelo y conviértelo</h2>
+      <p class="lead">En el navegador, sin instalar nada, o con una aplicación de escritorio. Es gratis y de código abierto.</p>
       <div class="grid-3">
         <div class="card feature"><h3>En el navegador</h3><p><a href="./app/index.html">Convertir y abrir</a>: pasa tus fotos a <code>.tsl</code> y abre archivos Tesela sin subir nada a ningún servidor. En Chrome y Edge se instala como aplicación y abre los <code>.tsl</code> con doble clic.</p></div>
-        <div class="card feature"><h3>Aplicación de escritorio</h3><p>Visor y conversor nativos para <a href="https://github.com/davidpalmerojara/Tesela/releases/latest">Windows, macOS y Linux</a>, de solo unos MB. Asocia los <code>.tsl</code> para abrirlos con doble clic. Aún sin firma digital: Windows pedirá «Más información → Ejecutar de todas formas», y en macOS se abre con clic derecho → Abrir.</p></div>
-        <div class="card feature"><h3>Línea de comandos</h3><p>El codificador completo, con animación, sin pérdida y todas las opciones, para <a href="https://github.com/davidpalmerojara/Tesela/releases/latest">Windows, macOS (Intel y Apple) y Linux</a>. Para automatizar conversiones o integrarlo en tu web.</p></div>
+        <div class="card feature"><h3>Aplicación de escritorio</h3><p>Visor y conversor nativos para <a href="https://github.com/davidpalmerojara/Tesela/releases/latest">Windows, macOS y Linux</a>. Asocia los <code>.tsl</code> para abrirlos con doble clic. Aún sin firma digital: Windows pedirá «Más información → Ejecutar de todas formas», y en macOS se abre con clic derecho → Abrir.</p></div>
+        <div class="card feature"><h3>Línea de comandos</h3><p>El codificador completo, con animación, sin pérdida y todas las opciones, para <a href="https://github.com/davidpalmerojara/Tesela/releases/latest">Windows, macOS (Intel y Apple) y Linux</a>, para convertir por lotes desde un script o en el proceso de publicación de tu web.</p></div>
       </div>
     </section>
 
     <section class="section start" id="empezar">
-      <p class="eyebrow">Empieza en un minuto</p>
+      <p class="eyebrow">Empezar</p>
       <h2>De tu foto a tu web</h2>
       <div class="grid-2">
         <div>
@@ -218,23 +218,23 @@
         </div>
       </div>
       <div class="browsers"><span>Chrome</span><span>Edge</span><span>Firefox</span><span>Safari</span><span>Android e iOS</span></div>
-      <p class="muted" style="font-size:14px">Funciona en todos los navegadores modernos con WebAssembly. <a href="./docs/index.html#web">Guía completa de uso en la web</a>.</p>
+      <p class="muted" style="font-size:14px">Funciona en los navegadores con WebAssembly. <a href="./docs/index.html#web">Guía de uso en la web</a>.</p>
     </section>
 
     <section class="section faq" id="faq">
       <p class="eyebrow">Preguntas frecuentes</p>
       <h2>Antes de usarlo</h2>
       <details class="card"><summary>¿Es un formato estándar?</summary>
-        <p>No. Es un proyecto independiente y experimental. Ningún navegador lo soporta de forma nativa; funciona gracias a una
+        <p>No. Es un proyecto independiente y experimental. Ningún navegador lo soporta de forma nativa: se decodifica con una
           librería de WebAssembly. Conviene servir también una versión en JPEG como respaldo.</p></details>
       <details class="card"><summary>¿Los visitantes pueden guardar las imágenes?</summary>
         <p>Sí. Con <code>tesela-auto.js</code>, el navegador recibe la imagen ya decodificada y «Guardar imagen como» funciona
           igual que con cualquier otra.</p></details>
       <details class="card"><summary>¿Es rápido codificando?</summary>
-        <p>En fotos, más que AVIF (speed 4): 1,9 frente a 2,5 s por foto de Kodak. Pero mucho menos que JPEG XL
-          o WebP, porque prueba muchas más combinaciones de bloques y predicciones para ahorrar bytes. Usa todos los núcleos
-          del procesador, también en el navegador. Si hace falta más velocidad, los modos rápidos (<code>-e 1</code> a
-          <code>-e 3</code>) codifican varias veces más rápido que el modo por defecto.</p></details>
+        <p>En fotos, más que AVIF (speed 4): 1,9 frente a 2,5 s por foto de Kodak. JPEG XL y WebP codifican de 10 a 20
+          veces más rápido, porque Tesela prueba muchas más combinaciones de bloques y predicciones para ahorrar bytes. Usa todos
+          los núcleos del procesador, también en el navegador. Los modos rápidos (<code>-e 1</code> a <code>-e 3</code>)
+          codifican de 2,5 a 5 veces más rápido que el modo por defecto.</p></details>
       <p><a href="./docs/index.html#faq">Más preguntas en la documentación →</a></p>
     </section>
   </main>
@@ -242,7 +242,7 @@
   <footer class="site">
     <div class="wrap">
       <div><a class="brand" href="./index.html"><span class="logo"><i></i><i></i><i></i></span>Tesela</a>
-        <p>Formato de imagen experimental escrito en Rust. Código, banco de pruebas y metodología, abiertos.</p>
+        <p>Formato de imagen experimental escrito en Rust. El código, el banco de pruebas y la metodología están publicados.</p>
         <p class="by">Un proyecto de <a href="https://davidpalmero.dev/">David Palmero</a></p></div>
       <div><h4>Producto</h4><a href="./app/index.html">Convertir y abrir</a><a href="./compare/index.html">Comparador</a><a href="./demo/index.html">Demo web</a><a href="./demo/img.html">HTML normal</a></div>
       <div><h4>Documentación</h4><a href="./docs/index.html#empezar">Empezar</a><a href="./docs/index.html#web">En la web</a><a href="./docs/index.html#formato">Cómo funciona</a><a href="./docs/index.html#faq">Preguntas</a></div>
