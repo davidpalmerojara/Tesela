@@ -76,8 +76,8 @@
     <article>
       <h1 id="introduccion">Documentación de Tesela</h1>
       <p class="lead">Tesela es un formato de imagen con pérdida (y sin pérdida) escrito desde cero en Rust. A igual
-        calidad perceptual ocupa menos que WebP, AVIF y JPEG XL en fotos, capturas de pantalla e ilustraciones, y se usa
-        en la web gracias a un módulo de WebAssembly.</p>
+        calidad perceptual ocupa menos que WebP, AVIF y JPEG XL en fotos, capturas de pantalla e ilustraciones, y en la
+        web se decodifica con un módulo de WebAssembly.</p>
       <p>Admite transparencia, un modo sin pérdida exacto y una vista previa progresiva. El codificador y el
         decodificador son la misma base de código en nativo y en el navegador, y producen exactamente los mismos bytes.</p>
       <p class="note"><b>Estado.</b> La versión 1 del formato está congelada, con especificación y archivos de
@@ -121,10 +121,10 @@ cargo build --release
         cada <code>.tsl</code> al navegador ya decodificado, así que funcionan <code>&lt;img&gt;</code>,
         <code>srcset</code>, <code>&lt;picture&gt;</code>, los fondos CSS y «Guardar imagen como».</p>
       <ul>
-        <li><b>Primera visita:</b> el Service Worker aún no está activo; las imágenes se recargan solas en cuanto lo está.</li>
-        <li><b>Requisitos:</b> HTTPS (o <code>localhost</code>). El Service Worker solo controla las páginas de su carpeta y
-          subcarpetas: por eso va en la raíz.</li>
-        <li><b>Sin Service Worker:</b> las <code>&lt;img&gt;</code> se decodifican en la página; los fondos CSS no.</li>
+        <li>En la primera visita el Service Worker aún no está activo; las imágenes se recargan solas en cuanto lo está.</li>
+        <li>Necesita HTTPS (o <code>localhost</code>). El Service Worker solo controla las páginas de su carpeta y
+          subcarpetas, y por eso va en la raíz.</li>
+        <li>En navegadores sin Service Worker, las <code>&lt;img&gt;</code> se decodifican en la página; los fondos CSS no.</li>
       </ul>
       <p><a href="../demo/img.html">Ver la demo con HTML normal</a>.</p>
 
@@ -180,7 +180,7 @@ const preview = await decodePreview(firstBytes);       // vista previa, si ya ha
           oculta el hueco del <code>&lt;img data-tsl&gt;</code>.</li>
         <li><b><code>loading="lazy"</code>:</b> se decodifica al acercarse a la pantalla. Las imágenes que se añaden después
           (una galería, un lightbox) se detectan solas.</li>
-        <li><b>Animaciones:</b> muestra el primer fotograma; para reproducirlas, <code>&lt;tesela-img&gt;</code>.</li>
+        <li>De las animaciones muestra el primer fotograma; para reproducirlas, usa <code>&lt;tesela-img&gt;</code>.</li>
       </ul>
       <p>Para un lightbox o cualquier imagen creada desde JavaScript:</p>
       <pre><code>const url = await TeselaLite.decodeToURL('/img/foto-grande.tsl');  // URL blob: de un PNG
@@ -188,7 +188,7 @@ lightbox.querySelector('img').src = url;   // mismo .tsl, misma URL: no se decod
 TeselaLite.load(img);                      // decodificar ya, aunque tenga loading="lazy"</code></pre>
       <p>Si la página ya carga <code>tesela.wasm</code> (por ejemplo, para <code>&lt;tesela-img&gt;</code>),
         <code>&lt;script src="tesela-lite.js" data-wasm="tesela.wasm"&gt;</code> reutiliza ese módulo en vez de descargar otro.</p>
-      <p><b>CSP.</b> Lo que hay que añadir a una política estricta:</p>
+      <p>Lo que hay que añadir a una política de seguridad (CSP) estricta:</p>
       <pre><code>script-src  'self' 'wasm-unsafe-eval';   # compilar el WebAssembly
 worker-src  'self';                      # el worker es el propio tesela-lite.js
 connect-src 'self';                      # descargar los .tsl y el .wasm
@@ -208,10 +208,10 @@ img-src     'self' data: blob:;          # el marcador (data:) y la imagen decod
 
       <h3 id="web-servidor">Servidor</h3>
       <ul>
-        <li><b>Tipos MIME:</b> sirve <code>.wasm</code> como <code>application/wasm</code> y <code>.js</code> como
+        <li>Sirve <code>.wasm</code> como <code>application/wasm</code> y <code>.js</code> como
           <code>text/javascript</code>. <code>web/serve.py</code> ya lo hace (en algunos Windows el servidor de Python
           por defecto no).</li>
-        <li><b>Codificar con varios hilos en el navegador</b> (opcional): la página debe estar aislada entre orígenes, con
+        <li>Para codificar con varios hilos en el navegador (opcional), la página debe estar aislada entre orígenes, con
           <code>Cross-Origin-Opener-Policy: same-origin</code> y <code>Cross-Origin-Embedder-Policy: require-corp</code>.
           Entonces <code>tesela-threads.js</code> usa <code>tesela-mt.wasm</code>, con el mismo resultado byte a byte.
           Donde no se pueden poner cabeceras (GitHub Pages), el comparador las añade con un Service Worker.</li>
@@ -309,8 +309,8 @@ tesela roundtrip &lt;entrada&gt; [opciones de encode]         # codifica, decodi
       <h2 id="faq">Preguntas frecuentes</h2>
       <dl class="faq">
         <dt>¿Por qué otro formato de imagen?</dt>
-        <dd>Para explorar cuánto se puede mejorar hoy partiendo de cero, con técnicas de los códecs de vídeo modernos y un
-          banco de pruebas honesto. El resultado ocupa menos que los formatos actuales en todos los tipos de contenido probados.</dd>
+        <dd>Para ver cuánto se puede mejorar partiendo de cero, con técnicas de los códecs de vídeo modernos y un
+          banco de pruebas reproducible. En todos los tipos de contenido probados ocupa menos que WebP, AVIF y JPEG XL.</dd>
         <dt>¿Funciona en todos los navegadores?</dt>
         <dd>En todos los modernos (Chrome, Edge, Firefox, Safari, también en móvil), porque se decodifica con WebAssembly. No
           hay soporte nativo, así que conviene servir también un JPEG como respaldo.</dd>
@@ -318,11 +318,11 @@ tesela roundtrip &lt;entrada&gt; [opciones de encode]         # codifica, decodi
         <dd>Sí. Con <code>tesela-auto.js</code> el navegador recibe la imagen ya decodificada y «Guardar imagen como»
           funciona como siempre. Como cualquier imagen de la web, no hay protección contra copias.</dd>
         <dt>¿Es rápido codificando?</dt>
-        <dd>En fotos y capturas, más que AVIF (speed 4), pero mucho menos que JPEG XL o WebP: prueba muchas más particiones y
-          predicciones para ahorrar bytes. Usa todos los núcleos, y una imagen se codifica una vez y se decodifica miles. Para
-          cuando importa la velocidad están los modos rápidos (<code>-e 1</code> a <code>-e 3</code>).</dd>
+        <dd>En fotos y capturas, más que AVIF (speed 4), pero JPEG XL y WebP son de 10 a 20 veces más rápidos: Tesela prueba
+          muchas más particiones y predicciones para ahorrar bytes. Usa todos los núcleos, y una imagen se codifica una vez y
+          se decodifica miles. Si importa la velocidad, están los modos rápidos (<code>-e 1</code> a <code>-e 3</code>).</dd>
         <dt>¿Y el modo sin pérdida?</dt>
-        <dd>Es exacto bit a bit y mejora a PNG con claridad, pero en fotos ocupa más que WebP sin pérdida y que JPEG XL.</dd>
+        <dd>Es exacto bit a bit y ocupa un 32 % menos que PNG optimizado en 10 imágenes de prueba, pero en fotos ocupa más que WebP sin pérdida y que JPEG XL.</dd>
         <dt>¿Qué limitaciones tiene?</dt>
         <dd>8 bits por canal, sin HDR, y el alfa siempre es sin pérdida. En animación, Tesela gana a AVIF animado en
           capturas, interfaces, movimiento de cámara y objetos en movimiento, pero en zooms largos AVIF ocupa un 9-18 % menos. El perfil de color se respeta con
@@ -351,7 +351,7 @@ tesela roundtrip &lt;entrada&gt; [opciones de encode]         # codifica, decodi
   <footer class="site">
     <div class="wrap">
       <div><a class="brand" href="../index.html"><span class="logo"><i></i><i></i><i></i></span>Tesela</a>
-        <p>Formato de imagen experimental escrito en Rust. Código, banco de pruebas y metodología, abiertos.</p></div>
+        <p>Formato de imagen experimental escrito en Rust. El código, el banco de pruebas y la metodología están publicados.</p></div>
       <div><h4>Producto</h4><a href="../compare/index.html">Comparador</a><a href="../demo/index.html">Demo web</a><a href="../demo/img.html">HTML normal</a></div>
       <div><h4>Documentación</h4><a href="#empezar">Empezar</a><a href="#web">En la web</a><a href="#formato">Cómo funciona</a><a href="#faq">Preguntas</a></div>
       <div><h4>Proyecto</h4><a href="https://github.com/davidpalmerojara/Tesela">GitHub</a><a href="https://github.com/davidpalmerojara/Tesela/blob/HEAD/docs/especificacion-v1.md">Especificación v1</a><a href="https://github.com/davidpalmerojara/Tesela/tree/HEAD/bench/results">Datos del banco</a></div>
