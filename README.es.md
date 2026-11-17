@@ -508,11 +508,73 @@ const tsl = await encode(imageData, { quality: 85 });  // codificar en el navega
 const url = await toObjectURL(bytes);                  // para cualquier <img>
 ```
 
-- **Tamaño del módulo.** `web/tesela.wasm` pesa 515 KB e incluye el codificador, el
-  decodificador y las métricas.
+- **Tamaño del módulo.** `web/tesela.wasm` pesa 925 KB (268 KB con brotli) e incluye el
+  codificador, el decodificador y las métricas.
 - **Paralelismo.** La librería reparte las teselas entre varios Web Workers.
-- **Recompilar.** `web/build.sh` regenera el módulo (necesitas
-  `rustup target add wasm32-unknown-unknown`).
+- **Recompilar.** `web/build.sh` regenera los módulos (necesitas
+  `rustup target add wasm32-unknown-unknown wasm32-wasip1-threads`).
+
+### Opción 3: tesela-lite.js, solo mostrar (webs estáticas, CSP estricta)
+
+Para una web estática (un portafolio, un blog) que solo necesita mostrar imágenes: un archivo sin
+dependencias, `web/tesela-lite.js` (16 KB, 5 KB con gzip), y el módulo que solo decodifica,
+`web/tesela-dec.wasm` (550 KB; 197 KB con gzip, 156 KB con brotli). Sin Service Worker ni módulos
+de JavaScript, y funciona con una política de seguridad (CSP) estricta. La web de Tesela lo usa
+para sus propias imágenes.
+
+Copia los dos archivos en la misma carpeta de tu web (en tu dominio, no en un CDN: el worker tiene
+que ser del mismo origen que la página), convierte las imágenes
+(`tesela encode foto.jpg foto.tsl -q 85`) y conserva el original o un WebP como respaldo:
+
+```html
+<script src="/tesela-lite.js" defer></script>
+
+<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E"
+     data-tsl="/img/foto.tsl" data-fallback="/img/foto.webp"
+     width="1200" height="800" alt="Descripción" loading="lazy">
+<noscript><img src="/img/foto.webp" width="1200" height="800" alt="Descripción" loading="lazy"></noscript>
+```
+
+```css
+img { max-width: 100%; height: auto; }
+@media (scripting: none) { img[data-tsl] { display: none !important; } }
+```
+
+- **`src`** es un SVG vacío sin proporción propia: mientras se decodifica el `.tsl`, el hueco
+  mantiene la proporción de `width`/`height` y nada salta (un `<img>` con `alt` y sin `src` se
+  dibuja como texto y no reserva su altura).
+- **`data-tsl`** se descarga y se decodifica en un Web Worker; el módulo se compila una vez y lo
+  comparten todos los workers. El resultado va al mismo `<img>` como PNG `blob:` (píxeles exactos,
+  con el perfil ICC), así que el CSS, `object-fit`, «Guardar imagen como» y los eventos `load`
+  funcionan como siempre.
+- **`data-fallback`** se usa si Tesela no puede funcionar (sin WebAssembly, bloqueado por la CSP,
+  error de red, archivo dañado) y solo se descarga entonces.
+- **`<noscript>`** es lo que ve quien no tiene JavaScript; la regla `scripting: none` oculta el
+  hueco vacío del `<img data-tsl>`.
+- **`loading="lazy"`** decodifica al acercarse a la pantalla (IntersectionObserver). Las imágenes
+  que se añaden después (galerías, lightbox) se detectan solas.
+- **Animaciones**: muestra el primer fotograma; para reproducirlas, `<tesela-img>`.
+- **API** para lightbox e imágenes creadas desde JavaScript:
+  `img.src = await TeselaLite.decodeToURL('/img/grande.tsl')` (misma URL, mismo `blob:`; no se
+  decodifica dos veces), `TeselaLite.load(img)` (decodificar ya, aunque sea diferida).
+- **`data-wasm`**: `<script src="tesela-lite.js" data-wasm="tesela.wasm">` reutiliza el módulo
+  completo si la página ya lo carga para `<tesela-img>`.
+
+**CSP.** Lo que necesita una política estricta, además de `'self'`:
+
+```
+script-src  'self' 'wasm-unsafe-eval';   # compilar el módulo WebAssembly
+worker-src  'self';                      # el worker es el propio tesela-lite.js
+connect-src 'self';                      # descargar los .tsl y el .wasm
+img-src     'self' data: blob:;          # el marcador (data:) y la imagen decodificada (blob:)
+```
+
+`'wasm-unsafe-eval'` solo permite compilar WebAssembly, no `eval` de JavaScript (Chrome 97,
+Firefox 102, Safari 16); sin ella se muestran los respaldos. No hace falta `'unsafe-inline'` ni
+para scripts ni para estilos. Si la CSP llega como cabecera HTTP, envíala también con
+`tesela-lite.js` (el worker tiene su propia política); con `'strict-dynamic'` y nonces, añade
+`worker-src 'self'`. Si no se puede crear el worker, se decodifica en la página (más lento, pero
+funciona). Demo: [`web/demo/lite.html`](web/demo/lite.html).
 
 Para probarlo en local:
 
@@ -528,6 +590,11 @@ La web publicada ([tesela.davidpalmero.dev](https://tesela.davidpalmero.dev/)) e
 repositorio) y con las cabeceras de aislamiento de `web/_headers`. Cada cambio en la rama se
 publica solo. Como alternativa, el workflow `.github/workflows/pages.yml` la publica en GitHub
 Pages (hay que activarlo en *Settings → Pages → Source: GitHub Actions*).
+
+La web sirve sus propias imágenes en Tesela: los recortes de la galería (sin pérdida, idénticos
+píxel a píxel) y las curvas de la documentación (con pérdida, SSIMULACRA2 ≥ 90) son `.tsl`
+generados con `web/build-images.sh` y mostrados con `tesela-lite.js`, con los PNG al lado como
+respaldo: 1 354 KB en PNG pasan a 746 KB (−45 %).
 
 ### Comparador
 
